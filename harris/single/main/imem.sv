@@ -1,11 +1,10 @@
-module imem #( parameter WIDTH=32 ) (
-    input   logic   addr,
-    output  logic   inst
+module imem (
+    input   logic[5:0]  pc,
+    output  logic[31:0] inst
 );
-    logic [WITDH-1:0] IMEM;
+    logic[31:0] IMEM[63:0];
 
     initial $readmemh("memfile.data", IMEM);
-    assign inst = IMEM[addr];
-
+    assign inst = IMEM[pc];
     
 endmodule
