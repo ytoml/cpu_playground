@@ -1,7 +1,7 @@
 module imem (
     mem_bus_if.central imem_bus
 );
-    logic[31:0] IMEM[64];
+    logic[31:0] IMEM[0:63];
 
     initial $readmemh("memfile.data", IMEM);
     // inst <- ROM[pc]

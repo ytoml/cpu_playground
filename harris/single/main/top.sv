@@ -5,7 +5,7 @@ module top(
 );
     mem_bus_if #(.ADDR_WIDTH(6), .DATA_WIDTH(32)) imem_bus();
 
-    mem_bus_if #(.ADDR_WIDTH(6), .DATA_WIDTH(32)) dmem_bus();
+    mem_bus_if #(.ADDR_WIDTH(32), .DATA_WIDTH(32)) dmem_bus();
     assign data_addr        = dmem_bus.addr;
 
     ctrl_bus_if ctrl_bus();

@@ -18,5 +18,6 @@ module alu #(parameter N)(
             3'b111: alu_out = {0, (src1 - src2)[N-1]}   // set less than (この文法が正しいか怪しい)
         endcase
     end
+    assign zero = alu_out == 0;
     
 endmodule

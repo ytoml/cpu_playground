@@ -4,10 +4,7 @@ module dmem (
     input   logic           write_enab,
     input   logic[31:0]     write_data,
 );
-    logic[31:0] DMEM[64];
-    // logic[29:0] word_addr;
-    // assign word_addr = alu_res[31:2];
-    // assign read_data = DMEM[word_addr];
+    logic[31:0] DMEM[0:2**32-1];
     assign dmem_bus.data = DMEM[dmem_bus.addr];
 
     always_ff @(posedge ctrl_bus.clk) begin

@@ -27,7 +27,7 @@ module cpu (
 
     datapath    datapath(
         .ctrl_bus, .imem_bus, .dmem_bus,
-        .zero, .mem_to_reg, .write_enab,
+        .zero, .mem_to_reg,
         .pc_src, .alu_src, .reg_dst, reg_write,
         .jmp, .alu_ctrl_sig,
         .write_data
