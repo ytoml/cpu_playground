@@ -12,7 +12,6 @@ module top(
     assign ctrl_bus.clk     = clk;
     assign ctrl_bus.reset   = reset;
 
-    mother_board    mother_board(.imem_bus, .dmem_bus, .ctrl_bus, .write_enab, .write_data);
-    memory          memory(.imem_bus, .dmem_bus, .ctrl_bus, .write_enab, .write_data);
+    mother_board    mother_board(.ctrl_bus, .imem_bus, .dmem_bus, .write_enab, .write_data);
     
 endmodule
