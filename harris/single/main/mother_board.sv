@@ -11,6 +11,7 @@ module motherboard (
     assign inst             = imem_bus.data;
     assign imem_bus.addr    = pc;
 
-    datapath    datapath(.ctrl_bus)
+    cpu         cpu(.imem_bus);
+    datapath    datapath(.ctrl_bus);
     
 endmodule
