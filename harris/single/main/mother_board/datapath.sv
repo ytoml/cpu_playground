@@ -25,8 +25,9 @@ module datapath(
 	assign pc_plus4		= pc + 32'b100;
 	assign br_offset	= { imm[29:0], 2'b00 };
 	assign pc_br		= pc_plus4 + br_offset;
-	assign pc_jmp		= { pc_plus4[31:28], inst[25:0], 2'b00 };
-    mux2 #(.N(32))  pc_br_select(.sel(pc_src), .src1(pc_plus4), .src2(pc_br), .out(pc_br_next)); // beq
+	assign pc_jmp		= { pc_plus4[31:28], inst[25:0], 2'b00 }; // word(4byte) alignment
+	// beq は 次の命令(pc_plus4) からの相対でアドレシング、j は(擬似)直接アドレシング
+    mux2 #(.N(32))  pc_br_select(.sel(pc_src), .src1(pc_plus4), .src2(pc_br), .out(pc_br_next));
 	mux2 #(.N(32))	pc_select(.sel(jmp), .src1(pc_br_next), .src2(pc_jmp), .out(pc_next));
 
     // lw 命令では inst[20:16], R 形式では inst[15:11] をディスティネーションに設定
