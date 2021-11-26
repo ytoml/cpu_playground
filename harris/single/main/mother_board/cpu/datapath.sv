@@ -12,7 +12,7 @@ module datapath(
 );
     logic[31:0] alu_out, inst, imm, reg_in, read_data, reg_in;
     logic[31:0] pc, pc_plus4, pc_next, pc_br, pc_br_next, br_offset, pc_jmp;
-    logic[31:0] alu_src1, alu_src2;
+    logic[31:0] alu_in1, alu_in2;
     logic[5:0]  rd;
 
     assign imem_bus.addr = pc;
@@ -32,15 +32,15 @@ module datapath(
 	mux2 #(.N(32))	pc_select(.sel(jmp), .src1(pc_br_next), .src2(pc_jmp), .out(pc_next));
 
     // lw 命令では inst[20:16], R 形式では inst[15:11] をディスティネーションに設定
-    mux2 #(.N(32))  sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(rd));
+    mux2 #(.N(5))  sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(rd));
     regfile         regfile(
         .ctrl_bus, .reg_write,
         .rs(inst[25:21]), .rt(inst[20:16]), .rd,
-        .rs_data(), .rt_data()
+        .reg_in, .rs_data(alu_in1), .rt_data(write_data)
     );
     sign_ext        sign_ext(.half(inst[15:0]), .full(imm));
     mux2 #(.N(32))  res_to_reg(.sel(mem_to_reg), .src1(alu_out), .src2(read_data), .out(reg_in));
     
-    mux2 #(.N(32))  src_select(.sel(alu_src), .src1(write_data), .src2(imm), .out(alu_src2));
-    alu #(.N(32))   alu(.src1(alu_src1), .src2(alu_src2), .alu_ctrl_sig, .alu_out, .zero);
+    mux2 #(.N(32))  alu_src_sel(.sel(alu_src), .src1(write_data), .src2(imm), .out(alu_in2));
+    alu #(.N(32))   alu(.src1(alu_in1), .src2(alu_in2), .alu_ctrl_sig, .alu_out, .zero);
 endmodule
