@@ -17,7 +17,7 @@ module decoder import lib_cpu::*; (
     end
 
     always_comb begin
-        unique case (prefix)
+        unique case (suffix)
             6'b100000:  funct <= ADD;
             6'b100010:  funct <= SUB;
             6'b100100:  funct <= AND;

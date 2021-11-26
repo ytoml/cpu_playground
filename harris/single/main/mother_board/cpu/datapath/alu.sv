@@ -18,6 +18,7 @@ module alu #(parameter N)(
             3'b101: alu_out = src1 | ~src2;
             3'b110: alu_out = sub;
             3'b111: alu_out = {{N-1{1'b0}}, sub[N-1]};   // set less than
+            default: alu_out = 32'bx;
         endcase
     end
     assign zero = alu_out == 0;

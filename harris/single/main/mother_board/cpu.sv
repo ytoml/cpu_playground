@@ -8,7 +8,8 @@ module cpu (
 );
     import lib_cpu::*;
 
-    OPECODE op, funct;
+    OPECODE     op;
+    FUNCT       funct;
     logic       zero, mem_to_reg, pc_src, alu_src, reg_dst, reg_write, jmp;
     logic[2:0]  alu_ctrl_sig;
     
@@ -18,19 +19,7 @@ module cpu (
         .op, .funct
     );
 
-    controller  controller(
-        .op, .funct,
-        .zero, .mem_to_reg, .write_enab,
-        .pc_src, .alu_src, .reg_dst, .reg_write,
-        .jmp, .alu_ctrl_sig
-    );
-
-    datapath    datapath(
-        .ctrl_bus, .imem_bus, .dmem_bus,
-        .zero, .mem_to_reg,
-        .pc_src, .alu_src, .reg_dst, .reg_write,
-        .jmp, .alu_ctrl_sig,
-        .write_data
-    );
+    controller  controller(.*);
+    datapath    datapath(.*);
     
 endmodule
