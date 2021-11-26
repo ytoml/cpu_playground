@@ -12,7 +12,7 @@ module decoder import lib_cpu::*; (
             6'b000100:  op <= BEQ;
             6'b001000:  op <= ADDI;
             6'b000010:  op <= J;
-            default:    op <= INVALID;
+            default:    op <= INVALID_OP;
         endcase
     end
 
@@ -23,7 +23,7 @@ module decoder import lib_cpu::*; (
             6'b100100:  funct <= AND;
             6'b100101:  funct <= OR;
             6'b101010:  funct <= SLT;
-            default:    funct <= INVALID;
+            default:    funct <= INVALID_FU;
         endcase
     end
 endmodule

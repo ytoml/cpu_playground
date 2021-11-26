@@ -10,10 +10,10 @@ module datapath(
     input   logic[2:0]  alu_ctrl_sig,
     output  logic[31:0] write_data
 );
-    logic[31:0] alu_out, inst, imm, reg_in, read_data, reg_in;
+    logic[31:0] alu_out, inst, imm, reg_in, read_data;
     logic[31:0] pc, pc_plus4, pc_next, pc_br, pc_br_next, br_offset, pc_jmp;
     logic[31:0] alu_in1, alu_in2;
-    logic[5:0]  rd;
+    logic[4:0]  reg_id;
 
     assign imem_bus.addr = pc;
     assign inst = imem_bus.data;
@@ -21,7 +21,7 @@ module datapath(
     assign read_data = dmem_bus.data;
 
 	// PC 制御
-	ff #(.N(32))	pcreg(.ctrl_bus, pc_next, pc);
+	ff #(.N(32))	pcreg(.ctrl_bus, .in(pc_next), .out(pc));
 	assign pc_plus4		= pc + 32'b100;
 	assign br_offset	= { imm[29:0], 2'b00 };
 	assign pc_br		= pc_plus4 + br_offset;
@@ -32,10 +32,10 @@ module datapath(
 	mux2 #(.N(32))	pc_select(.sel(jmp), .src1(pc_br_next), .src2(pc_jmp), .out(pc_next));
 
     // lw 命令では inst[20:16], R 形式では inst[15:11] をディスティネーションに設定
-    mux2 #(.N(5))  sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(rd));
+    mux2 #(.N(5))  sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(reg_id));
     regfile         regfile(
         .ctrl_bus, .reg_write,
-        .rs(inst[25:21]), .rt(inst[20:16]), .rd,
+        .rs(inst[25:21]), .rt(inst[20:16]), .rd(reg_id),
         .reg_in, .rs_data(alu_in1), .rt_data(write_data)
     );
     sign_ext        sign_ext(.half(inst[15:0]), .full(imm));

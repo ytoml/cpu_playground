@@ -1,12 +1,15 @@
 module test();
 	logic	clk, reset, write_enab;
-	logic[31:0]	write_data, data_addr, 
-	top	top(.clk, .reset, .write_data, .data_addr, .write_enab);
+	logic[31:0]	write_data, data_addr; 
+	top	top(.*);
 	
 	initial begin
+        $dumpfile("test.vcd");
+        $dumpvars(0, test);
 		clk <= 0; reset <= 1;
 		#10 reset <= 0;
 		#1000
+        $finish;
 	end
 
 	always @(negedge clk) begin

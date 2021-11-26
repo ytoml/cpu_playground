@@ -1,8 +1,8 @@
 `include "lib_cpu.svh"
-module alu_ctrl(
+module alu_ctrl import lib_cpu::*; (
     input   FUNCT       funct,
     input   logic[1:0]  alu_op,
-    output  logic[2:0]  alu_ctrl_sig,
+    output  logic[2:0]  alu_ctrl_sig
 );
     always_comb begin
         unique case (alu_op)

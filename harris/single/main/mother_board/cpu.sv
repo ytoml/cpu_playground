@@ -21,14 +21,14 @@ module cpu (
     controller  controller(
         .op, .funct,
         .zero, .mem_to_reg, .write_enab,
-        .pc_src, .alu_src, .reg_dst, reg_write,
+        .pc_src, .alu_src, .reg_dst, .reg_write,
         .jmp, .alu_ctrl_sig
     );
 
     datapath    datapath(
         .ctrl_bus, .imem_bus, .dmem_bus,
         .zero, .mem_to_reg,
-        .pc_src, .alu_src, .reg_dst, reg_write,
+        .pc_src, .alu_src, .reg_dst, .reg_write,
         .jmp, .alu_ctrl_sig,
         .write_data
     );

@@ -8,7 +8,7 @@ package lib_cpu;
         BEQ,
         ADDI,
         J,
-        INVALID
+        INVALID_OP
     } OPECODE;
 
     typedef enum logic[5:0] {
@@ -17,6 +17,7 @@ package lib_cpu;
         AND,
         OR,
         SLT,
-        INVALID
+        INVALID_FU
     } FUNCT;
 endpackage
+`endif // LIB_CPU_SVH

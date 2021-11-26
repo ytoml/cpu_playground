@@ -1,10 +1,11 @@
 module dmem (
-    mem_bus_if.peripheral   dmem_bus,
     ctrl_bus_if.central  ctrl_bus,
+    mem_bus_if.peripheral   dmem_bus,
     input   logic           write_enab,
-    input   logic[31:0]     write_data,
+    input   logic[31:0]     write_data
 );
-    logic[31:0] DMEM[0:2**30-1];
+    // ひとまず小さめに RAM を取ることにして、大きいアドレスにアクセスしないようにしておく
+    logic[31:0] DMEM[63:0]; // logic[31:0] DMEM[0:2**30-1]; 
 	logic[29:0] word_index;
 	// logic[1:0] word_offset;
 

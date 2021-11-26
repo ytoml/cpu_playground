@@ -6,7 +6,7 @@ module controller import lib_cpu::*; (
     output  logic       mem_to_reg, write_enab,
     output  logic       pc_src, alu_src,
     output  logic       reg_dst, reg_write,
-    output  logic       jmp
+    output  logic       jmp,
     output  logic[2:0]  alu_ctrl_sig
 );
     logic[1:0]  alu_op;

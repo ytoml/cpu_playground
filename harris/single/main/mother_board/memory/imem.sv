@@ -1,5 +1,5 @@
 module imem (
-    mem_bus_if.central imem_bus
+    mem_bus_if.peripheral imem_bus
 );
     logic[31:0] IMEM[0:63];
 
