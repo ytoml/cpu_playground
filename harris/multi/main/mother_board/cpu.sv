@@ -9,11 +9,18 @@ module cpu (
 
     OPECODE     op;
     FUNCT       funct;
-    logic       zero, mem_to_reg, pc_src, alu_src, reg_dst, reg_write, jmp;
-	logic		ireg_write_enab, i_or_d;
+    logic       zero, mem_to_reg, pc_src, alu_srcA, reg_dst, reg_write, jmp;
+	logic		pc_write_enab, ireg_write_enab, i_or_d;
+	logic[1:0]	alu_srcB;
     logic[2:0]  alu_ctrl_sig;
+	logic[31:0]	inst;
 
-    controller  controller(.*);
     datapath    datapath(.*);
+	decoder		decoder(
+        .prefix(inst[31:26]),
+        .suffix(inst[5:0]),
+        .op, .funct
+    );
+    controller  controller(.*);
     
 endmodule
