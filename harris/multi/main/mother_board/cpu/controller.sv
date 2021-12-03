@@ -1,5 +1,6 @@
 `include "lib_cpu.svh"
 module controller import lib_cpu::*; (
+    ctrl_bus_if.central ctrl_bus,
     input   OPECODE     op,
     input   FUNCT       funct,
     input   logic       zero,
