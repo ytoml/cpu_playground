@@ -1,7 +1,7 @@
 module ram (
     ctrl_bus_if.central  ctrl_bus,
     mem_bus_if.peripheral   mem_bus,
-    input   logic           mem_write_enab,
+    input   logic           mem_enab,
     input   logic[31:0]     write_data
 );
     // ひとまず小さめに RAM を取ることにして、大きいアドレスにアクセスしないようにしておく
@@ -14,7 +14,7 @@ module ram (
     assign mem_bus.data = RAM[word_index];
 
     always_ff @(posedge ctrl_bus.clk) begin
-        if (mem_write_enab) RAM[word_index] <= write_data;
+        if (mem_enab) RAM[word_index] <= write_data;
     end
     
 endmodule
