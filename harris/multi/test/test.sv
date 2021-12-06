@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 module test();
-	logic	pin_clock, pin_n_reset, write_enab;
+	logic	pin_clock, pin_n_reset, mem_enab;
 	logic[31:0]	write_data, data_addr; 
 	top	top(.*, .clk(pin_clock), .reset(pin_n_reset));
 

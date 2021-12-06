@@ -2,7 +2,6 @@
 module cpu (
     ctrl_bus_if.central ctrl_bus,
     mem_bus_if.central  mem_bus,
-    output  logic       mem_enab,
     output  logic[31:0] write_data
 );
     import lib_cpu::*;

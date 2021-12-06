@@ -2,11 +2,12 @@
 `include "lib_state.svh"
 module path_ctrl import lib_cpu::*, lib_state::*; (
 	ctrl_bus_if.central ctrl_bus,
+	mem_bus_if.central	mem_bus,
 	input   OPECODE		op,
 	output	logic		i_or_d, ireg_enab,
 	output	logic[1:0]	pc_src,
 	output	logic		pc_write, branch,
-	output  logic		mem_to_reg, mem_enab,
+	output  logic		mem_to_reg,
 	output  logic		reg_dst, reg_write,
 	output	logic		alu_srcA,
 	output  logic[1:0]  alu_srcB, alu_op 
@@ -20,7 +21,7 @@ module path_ctrl import lib_cpu::*, lib_state::*; (
 		i_or_d, pc_src,
 		reg_dst, mem_to_reg,
 		alu_srcA, alu_srcB, alu_op,
-		ireg_enab, pc_write, branch, reg_write, mem_enab
+		ireg_enab, pc_write, branch, reg_write, mem_bus.enab,
 	} = ctrl_sigs;
 
 	always_comb begin

@@ -1,7 +1,7 @@
 module top(
     input   logic       clk, reset,
-    output  logic[31:0] write_data, data_addr,
-    output  logic       write_enab
+    output  logic       mem_enab,
+    output  logic[31:0] write_data, data_addr
 );
 
     ctrl_bus_if ctrl_bus();
