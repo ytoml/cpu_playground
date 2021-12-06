@@ -9,8 +9,13 @@ module cpu (
 
     OPECODE     op;
     FUNCT       funct;
-    logic       zero, mem_to_reg, pc_src, alu_srcA, reg_dst, reg_write, jmp;
-	logic		pc_enab, ireg_enab, i_or_d;
+    logic       zero;
+	logic		i_or_d, ireg_enab;
+	logic[1:0]	pc_src;
+	logic		pc_enab;
+	logic		mem_to_reg;
+	logic		reg_dst, reg_write;
+	logci		alu_srcA;
 	logic[1:0]	alu_srcB;
     logic[2:0]  alu_ctrl_sig;
 	logic[31:0]	inst;
