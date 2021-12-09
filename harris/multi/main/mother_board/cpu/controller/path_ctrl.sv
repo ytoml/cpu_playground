@@ -21,7 +21,7 @@ module path_ctrl import lib_cpu::*, lib_state::*; (
 		i_or_d, pc_src,
 		reg_dst, mem_to_reg,
 		alu_srcA, alu_srcB, alu_op,
-		ireg_enab, pc_write, branch, reg_write, mem_bus.enab,
+		ireg_enab, pc_write, branch, reg_write, mem_bus.enab
 	} = ctrl_sigs;
 
 	always_comb begin
@@ -37,7 +37,7 @@ module path_ctrl import lib_cpu::*, lib_state::*; (
 			BRANCH:			ctrl_sigs <= 15'bx01_10_10001_00100; // ALU で2つのソースレジスタの値を引いて、0ならば分岐
 			// ADDI_EXEC:		ctrl_sigs <= 15'bxxx_xx_11000_00000; // MEM_ADDR と同一
 			ADDI_TO_REG:	ctrl_sigs <= 15'bxxx_00_xxxxx_00010;	// RTYPE ではディスティネーションレジスタが inst[20:16] で指定される
-			JUMP			ctrl_sigs <= 15'bx10_xx_xxxxx_01000;
+			JUMP:			ctrl_sigs <= 15'bx10_xx_xxxxx_01000;
 			default:	ctrl_sigs <= 15'bx;
 		endcase
 	end

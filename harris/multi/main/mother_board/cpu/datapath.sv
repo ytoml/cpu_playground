@@ -50,7 +50,7 @@ module datapath(
 	// rt data, 4(pc increment), imm, imm << 2
 	mux4 #(.N(32))	alu_srcB_sel(.sel(alu_srcB), .src0(write_data), .src1(32'b100), .src2(imm), .src3(br_offset), .out(alu_inB));
 
-	alu #(.N(32))   alu(.src0(alu_inA), .src1(alu_inB), .alu_ctrl_sig, .alu_res, .zero);
+	alu #(.N(32))   alu(.srcA(alu_inA), .srcB(alu_inB), .alu_ctrl_sig, .alu_res, .zero);
 	ff	#(.N(32))	alu_buf(.ctrl_bus, .in(alu_res), .out(alu_out));
 
 	mux4 #(.N(32))	pc_select(.sel(pc_src), .src0(alu_res), .src1(alu_out), .src2(pc_jmp), .src3(32'bx), .out(pc_next));

@@ -14,7 +14,7 @@ module cpu (
 	logic		pc_enab;
 	logic		mem_to_reg;
 	logic		reg_dst, reg_write;
-	logci		alu_srcA;
+	logic		alu_srcA;
 	logic[1:0]	alu_srcB;
     logic[2:0]  alu_ctrl_sig;
 	logic[31:0]	inst;

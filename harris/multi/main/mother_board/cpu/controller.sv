@@ -15,7 +15,7 @@ module controller import lib_cpu::*; (
 	output  logic[2:0]  alu_ctrl_sig
 );
 	logic[1:0]  alu_op;
-	logic	   beq_enab, branch;
+	logic	   beq_enab, branch, pc_write;
 
 	alu_ctrl	alu_ctrl(.*);
 	path_ctrl   path_ctrl(.*);
