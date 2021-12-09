@@ -44,29 +44,31 @@ module path_ctrl import lib_cpu::*, lib_state::*; (
 
 	always_ff @(posedge ctrl_bus.clk or posedge ctrl_bus.reset) begin
 		if (ctrl_bus.reset) state <= FETCH;
-		unique case (state)
-			FETCH:	state <= DECODE;
-			DECODE:	unique case (op)
-				RTYPE:		state <= EXECUTE;
-				LW, SW:		state <= MEM_ADDR;
-				BEQ:		state <= BRANCH;
-				ADDI:		state <= MEM_ADDR; // ADDI_EXEC;
-				J:			state <= JUMP;
-				default:	state <= INVALID_ST;
+		else begin
+			unique case (state)
+				FETCH:	state <= DECODE;
+				DECODE:	unique case (op)
+					RTYPE:		state <= EXECUTE;
+					LW, SW:		state <= MEM_ADDR;
+					BEQ:		state <= BRANCH;
+					ADDI:		state <= MEM_ADDR; // ADDI_EXEC;
+					J:			state <= JUMP;
+					default:	state <= INVALID_ST;
+				endcase
+				MEM_ADDR: unique case (op)
+					LW:			state <= MEM_READ;
+					SW:			state <= MEM_WRITE;
+					ADDI:		state <= ADDI_TO_REG;
+					default:	state <= INVALID_ST;
+				endcase
+				MEM_READ:		state <= MEM_TO_REG;
+				EXECUTE:		state <= ALU_TO_REG;
+				// ADDI_EXEC:		state <= ADDI_TO_REG;
+				MEM_TO_REG, MEM_WRITE, BRANCH, ADDI_TO_REG, ALU_TO_REG, JUMP:
+								state <= FETCH;
+				default:		state <= INVALID_ST;
 			endcase
-			MEM_ADDR: unique case (op)
-				LW:			state <= MEM_READ;
-				SW:			state <= MEM_WRITE;
-				ADDI:		state <= ADDI_TO_REG;
-				default:	state <= INVALID_ST;
-			endcase
-			MEM_READ:		state <= MEM_TO_REG;
-			EXECUTE:		state <= ALU_TO_REG;
-			// ADDI_EXEC:		state <= ADDI_TO_REG;
-			MEM_TO_REG, MEM_WRITE, BRANCH, ADDI_TO_REG, JUMP:
-							state <= FETCH;
-			default:		state <= INVALID_ST;
-		endcase
+		end
 	end
 
 

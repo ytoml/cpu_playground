@@ -12,6 +12,8 @@ module ram (
 	assign word_index = mem_bus.addr[31:2];
     assign mem_bus.data = RAM[word_index];
 
+    initial $readmemh("rom_data.mem", RAM);
+
     always_ff @(posedge ctrl_bus.clk) begin
         if (mem_bus.enab) RAM[word_index] <= write_data;
     end

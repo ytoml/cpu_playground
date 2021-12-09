@@ -21,7 +21,7 @@ module test();
 	end
 
 	always @(negedge pin_clock) begin
-		if (write_enab) begin
+		if (mem_enab) begin
 			if (data_addr === 84 && write_data === 7) begin 
 				$display("Simulation Succeeded.");
 				$stop;

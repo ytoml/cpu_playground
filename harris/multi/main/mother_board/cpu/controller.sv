@@ -20,7 +20,7 @@ module controller import lib_cpu::*; (
 	alu_ctrl	alu_ctrl(.*);
 	path_ctrl   path_ctrl(.*);
 
-	assign beq_eneb = zero & branch;
+	assign beq_enab = zero & branch;
 	assign pc_enab = beq_enab | pc_write;
 	
 endmodule
