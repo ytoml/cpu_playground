@@ -29,6 +29,7 @@ module datapath(
 	logic		reg_write_W, mem_to_reg_W;
 
 	// フォワーディング用の制御シグナル
+	logic		forwardA_D, forwardB_D;
 	logic[1:0]	forwardA_E, forwardB_E;
 
 	// ストール用の制御シグナル
