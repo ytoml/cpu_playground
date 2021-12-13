@@ -32,28 +32,31 @@ module datapath(
 	// フォワーディング用の制御シグナル
 	logic[1:0]	forwardA_E, forwardB_E;
 
-	hazard_unit			hazard_unit(.*);
+	// ストール用の制御シグナル
+	logic		pc_enab, enab_FD, flush_DE;
 
-	fetch_path			fetch_path(.*);
-	ff		#(.N(32))	pcreg_FD(.ctrl_bus, .in(pc_plus4_F), .out(pc_plus4_D));
-	ff		#(.N(32))	ireg(.ctrl_bus, .in(inst_F), .out(inst_D));
+	hazard_unit				hazard_unit(.*);
 
-	decode_path			decode_path(.*);
-	assign	inst		= inst_D;
-	ff		#(.N(32))	pcreg_DE(.ctrl_bus, .in(pc_plus4_D), .out(pc_plus4_E));
-	ff		#(.N(32))	imm_reg_DE(.ctrl_bus, .in(imm_D), .out(imm_E));
-	ff		#(.N(32))	rs_buf_DE(.ctrl_bus, .in(rs_out_D), .out(rs_out_E));
-	ff		#(.N(32))	rt_buf_DE(.ctrl_bus, .in(rt_out_D), .out(rt_out_E));
-	ff		#(.N(5))	rs_dst_DE(.ctrl_bus, .in(inst_D[25:21]), .out(rs_E));
-	ff		#(.N(5))	rt_dst_DE(.ctrl_bus, .in(inst_D[20:16]), .out(rt_E));
-	ff		#(.N(5))	rd_dst_DE(.ctrl_bus, .in(inst_D[15:11]), .out(rd_E));
-	ff		#(.N(1))	reg_write_DE(.ctrl_bus, .in(reg_write), .out(reg_write_E));
-	ff		#(.N(1))	mem_to_reg_DE(.ctrl_bus, .in(mem_to_reg), .out(mem_to_reg_E));
-	ff		#(.N(1))	mem_enab_DE(.ctrl_bus, .in(mem_enab), .out(mem_enab_E));
-	ff		#(.N(1))	branch_DE(.ctrl_bus, .in(branch), .out(branch_E));
-	ff		#(.N(3))	alu_ctrl_sig_DE(.ctrl_bus, .in(alu_ctrl_sig), .out(alu_ctrl_sig_E));
-	ff		#(.N(1))	alu_srcB_DE(.ctrl_bus, .in(alu_srcB), .out(alu_srcB_E));
-	ff		#(.N(1))	reg_dst_DE(.ctrl_bus, .in(reg_dst), .out(reg_dst_E));
+	fetch_path				fetch_path(.*);
+	enab_ff		#(.N(32))	pcreg_FD(.ctrl_bus, .enab(enab_FD), .in(pc_plus4_F), .out(pc_plus4_D));
+	enab_ff		#(.N(32))	ireg_FD(.ctrl_bus, .enab(enab_FD), .in(inst_F), .out(inst_D));
+
+	decode_path				decode_path(.*);
+	assign	inst			= inst_D;
+	reset_ff	#(.N(32))	pcreg_DE(.ctrl_bus, .reset(flush_DE), .in(pc_plus4_D), .out(pc_plus4_E));
+	reset_ff	#(.N(32))	imm_reg_DE(.ctrl_bus, .reset(flush_DE), .in(imm_D), .out(imm_E));
+	reset_ff	#(.N(32))	rs_buf_DE(.ctrl_bus, .reset(flush_DE), .in(rs_out_D), .out(rs_out_E));
+	reset_ff	#(.N(32))	rt_buf_DE(.ctrl_bus, .reset(flush_DE), .in(rt_out_D), .out(rt_out_E));
+	reset_ff	#(.N(5))	rs_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[25:21]), .out(rs_E));
+	reset_ff	#(.N(5))	rt_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[20:16]), .out(rt_E));
+	reset_ff	#(.N(5))	rd_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[15:11]), .out(rd_E));
+	reset_ff	#(.N(1))	reg_write_DE(.ctrl_bus, .reset(flush_DE), .in(reg_write), .out(reg_write_E));
+	reset_ff	#(.N(1))	mem_to_reg_DE(.ctrl_bus, .reset(flush_DE), .in(mem_to_reg), .out(mem_to_reg_E));
+	reset_ff	#(.N(1))	mem_enab_DE(.ctrl_bus, .reset(flush_DE), .in(mem_enab), .out(mem_enab_E));
+	reset_ff	#(.N(1))	branch_DE(.ctrl_bus, .reset(flush_DE), .in(branch), .out(branch_E));
+	reset_ff	#(.N(3))	alu_ctrl_sig_DE(.ctrl_bus, .reset(flush_DE), .in(alu_ctrl_sig), .out(alu_ctrl_sig_E));
+	reset_ff	#(.N(1))	alu_srcB_DE(.ctrl_bus, .reset(flush_DE), .in(alu_srcB), .out(alu_srcB_E));
+	reset_ff	#(.N(1))	reg_dst_DE(.ctrl_bus, .reset(flush_DE), .in(reg_dst), .out(reg_dst_E));
 
 	execute_path		execute_path(.*);
 	ff		#(.N(32))	alu_out_EM(.ctrl_bus, .in(alu_out_E), .out(alu_out_M));
