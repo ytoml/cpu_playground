@@ -2,14 +2,16 @@ module datapath(
 	ctrl_bus_if.central ctrl_bus,
 	mem_bus_if.central  imem_bus,
 	mem_bus_if.central  dmem_bus,
-	output  logic	   zero,
-	input   logic	   mem_to_reg,
-	input   logic	   pc_src, alu_srcB,
-	input   logic	   reg_dst, reg_write,
-	input   logic	   jmp,
-	input   logic[2:0]  alu_ctrl_sig,
-	output  logic[31:0] inst, write_data
+	output  logic		zero,
+	input   logic		mem_to_reg,
+	input	logic		mem_enab,
+	input   logic		pc_src, alu_srcB,
+	input   logic		reg_dst, reg_write,
+	input   logic		jmp,
+	input   logic[2:0]	alu_ctrl_sig,
+	output  logic[31:0]	inst, write_data
 );
+	// ステージごとのデータパス配線
 	logic[31:0] pc_F, pc_plus4_F, inst_F;
 	logic[31:0]	inst_D, pc_plus4_D, imm_D, rs_out_D, write_data_D; 
 	logic[31:0] pc_plus4_E, rt_out_E, alu_inA_E, alu_inB_E, alu_out_E, imm_E, write_data_E;
@@ -17,8 +19,14 @@ module datapath(
 	logic		zero_E;
 	logic[31:0]	alu_out_M, read_data_M;
 	logic[4:0]	reg_id_M;
-	logic		zero_M;
+	logic		pc_src_M, zero_M;
 	logic[31:0]	alu_out_W, read_data_W, reg_id_W, result_W;
+
+	// ステージごとの制御シグナル配線(decode ステージからくるものなので、 _D の線は用意せず ff に直接繋ぐ)
+	logic		reg_write_E, mem_to_reg_E, mem_enab_E, branch_E, alu_srcB_E, reg_dst_E;
+	logic[2:0]	alu_ctrl_sig_E;
+	logic		reg_write_M, mem_to_reg_M, mem_enab_M, branch_M;
+	logic		reg_write_W, mem_to_reg_W;
 
 	fetch_path			fetch_path(.*);
 	ff		#(.N(32))	pcreg_FD(.ctrl_bus, .in(pc_plus4_F), .out(pc_plus4_D));
@@ -32,6 +40,13 @@ module datapath(
 	ff		#(.N(32))	rt_buf_DE(.ctrl_bus, .in(rt_out_D), .out(write_data_E));
 	ff		#(.N(5))	rt_dst_DE(.ctrl_bus, .in(inst_D[20:16]), .out(rt_E));
 	ff		#(.N(5))	rd_dst_DE(.ctrl_bus, .in(inst_D[15:11]), .out(rd_E));
+	ff		#(.N(1))	reg_write_DE(.ctrl_bus, .in(reg_write), .out(reg_write_E));
+	ff		#(.N(1))	mem_to_reg_DE(.ctrl_bus, .in(mem_to_reg), .out(mem_to_reg_E));
+	ff		#(.N(1))	mem_enab_DE(.ctrl_bus, .in(mem_enab), .out(mem_enab_E));
+	ff		#(.N(1))	branch_DE(.ctrl_bus, .in(branch), .out(branch_E));
+	ff		#(.N(3))	alu_ctrl_sig_DE(.ctrl_bus, .in(alu_ctrl_sig), .out(alu_ctrl_sig_E));
+	ff		#(.N(1))	alu_srcB_DE(.ctrl_bus, .in(alu_srcB), .out(alu_srcB_E));
+	ff		#(.N(1))	reg_dst_DE(.ctrl_bus, .in(reg_dst), .out(reg_dst_E));
 
 	execute_path		execute_path(.*);
 	ff		#(.N(32))	alu_out_EM(.ctrl_bus, .in(alu_out_E), .out(alu_out_M));
@@ -39,13 +54,18 @@ module datapath(
 	ff		#(.N(32))	br_reg_EM(.ctrl_bus, .in(pc_br_E), .out(pc_br_M));
 	ff		#(.N(1))	zero_EM(.ctrl_bus, .in(zero_E), .out(zero_M));
 	ff		#(.N(5))	reg_dst_EM(.ctrl_bus, .in(reg_id_E), .out(reg_id_M));
+	ff		#(.N(1))	reg_write_EM(.ctrl_bus, .in(reg_write_E), .out(reg_write_M));
+	ff		#(.N(1))	mem_to_reg_EM(.ctrl_bus, .in(mem_to_reg_E), .out(mem_to_reg_M));
+	ff		#(.N(1))	mem_enab_EM(.ctrl_bus, .in(mem_enab_E), .out(mem_enab_M));
+	ff		#(.N(1))	branch_EM(.ctrl_bus, .in(branch_E), .out(branch_M));
 
 	memory_path		memory_path(.*);
-	assign	zero		= zero_M;	
 	assign	write_data	= write_data_M;
 	ff		#(.N(32))	alu_out_MW(.ctrl_bus, .in(alu_out_M), .out(alu_out_W));
 	ff		#(.N(32))	read_data_MW(.ctrl_bus, .in(read_data_M), .out(read_data_W));
 	ff		#(.N(5))	reg_dst_MW(.ctrl_bus, .in(reg_id_M), .out(reg_id_W));
+	ff		#(.N(1))	reg_write_MW(.ctrl_bus, .in(reg_write_M), .out(reg_write_W));
+	ff		#(.N(1))	mem_to_reg_MW(.ctrl_bus, .in(mem_to_reg_M), .out(mem_to_reg_W));
 
 	writeback_path	writeback_path(.*);
 endmodule
