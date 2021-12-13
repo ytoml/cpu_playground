@@ -14,19 +14,25 @@ module datapath(
 	// ステージごとのデータパス配線
 	logic[31:0] pc_F, pc_plus4_F, inst_F;
 	logic[31:0]	inst_D, pc_plus4_D, imm_D, rs_out_D, write_data_D; 
-	logic[31:0] pc_plus4_E, rt_out_E, alu_inA_E, alu_inB_E, alu_out_E, imm_E, write_data_E;
+	logic[31:0] pc_plus4_E, rs_out_E, rt_out_E, alu_out_E, imm_E, write_data_E;
 	logic[4:0]  rt_E, rd_E, reg_id_E;
 	logic		zero_E;
 	logic[31:0]	alu_out_M, read_data_M;
 	logic[4:0]	reg_id_M;
 	logic		pc_src_M, zero_M;
-	logic[31:0]	alu_out_W, read_data_W, reg_id_W, result_W;
+	logic[31:0]	alu_out_W, read_data_W, result_W;
+	logic[4:0]	reg_id_W;
 
 	// ステージごとの制御シグナル配線(decode ステージからくるものなので、 _D の線は用意せず ff に直接繋ぐ)
 	logic		reg_write_E, mem_to_reg_E, mem_enab_E, branch_E, alu_srcB_E, reg_dst_E;
 	logic[2:0]	alu_ctrl_sig_E;
 	logic		reg_write_M, mem_to_reg_M, mem_enab_M, branch_M;
 	logic		reg_write_W, mem_to_reg_W;
+
+	// フォワーディング用の制御シグナル
+	logic[1:0]	forwardA_E, forwardB_E;
+
+	hazard_unit			hazard_unit(.*);
 
 	fetch_path			fetch_path(.*);
 	ff		#(.N(32))	pcreg_FD(.ctrl_bus, .in(pc_plus4_F), .out(pc_plus4_D));
@@ -36,8 +42,9 @@ module datapath(
 	assign	inst		= inst_D;
 	ff		#(.N(32))	pcreg_DE(.ctrl_bus, .in(pc_plus4_D), .out(pc_plus4_E));
 	ff		#(.N(32))	imm_reg_DE(.ctrl_bus, .in(imm_D), .out(imm_E));
-	ff		#(.N(32))	rs_buf_DE(.ctrl_bus, .in(rs_out_D), .out(alu_inA_E));
-	ff		#(.N(32))	rt_buf_DE(.ctrl_bus, .in(rt_out_D), .out(write_data_E));
+	ff		#(.N(32))	rs_buf_DE(.ctrl_bus, .in(rs_out_D), .out(rs_out_E));
+	ff		#(.N(32))	rt_buf_DE(.ctrl_bus, .in(rt_out_D), .out(rt_out_E));
+	ff		#(.N(5))	rs_dst_DE(.ctrl_bus, .in(inst_D[25:21]), .out(rs_E));
 	ff		#(.N(5))	rt_dst_DE(.ctrl_bus, .in(inst_D[20:16]), .out(rt_E));
 	ff		#(.N(5))	rd_dst_DE(.ctrl_bus, .in(inst_D[15:11]), .out(rd_E));
 	ff		#(.N(1))	reg_write_DE(.ctrl_bus, .in(reg_write), .out(reg_write_E));
