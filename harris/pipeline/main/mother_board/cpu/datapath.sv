@@ -8,7 +8,7 @@ module datapath(
 	input   logic	   reg_dst, reg_write,
 	input   logic	   jmp,
 	input   logic[2:0]  alu_ctrl_sig,
-	output  logic[31:0] write_data
+	output  logic[31:0] inst, write_data
 );
 	logic[31:0] pc_F, pc_plus4_F, inst_F;
 	logic[31:0]	inst_D, pc_plus4_D, imm_D, rs_out_D, write_data_D; 
@@ -25,6 +25,7 @@ module datapath(
 	ff		#(.N(32))	ireg(.ctrl_bus, .in(inst_F), .out(inst_D));
 
 	decode_path			decode_path(.*);
+	assign	inst		= inst_D;
 	ff		#(.N(32))	pcreg_DE(.ctrl_bus, .in(pc_plus4_D), .out(pc_plus4_E));
 	ff		#(.N(32))	imm_reg_DE(.ctrl_bus, .in(imm_D), .out(imm_E));
 	ff		#(.N(32))	rs_buf_DE(.ctrl_bus, .in(rs_out_D), .out(alu_inA_E));

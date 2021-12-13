@@ -12,14 +12,13 @@ module cpu (
     FUNCT       funct;
     logic       zero, mem_to_reg, pc_src, alu_src, reg_dst, reg_write, jmp;
     logic[2:0]  alu_ctrl_sig;
+	logic[31:0]	inst;
     
     decoder decoder(
-        .prefix(imem_bus.data[31:26]),
-        .suffix(imem_bus.data[5:0]),
+        .prefix(inst[31:26]),
+        .suffix(inst[5:0]),
         .op, .funct
     );
-
     controller  controller(.*);
     datapath    datapath(.*);
-    
 endmodule
