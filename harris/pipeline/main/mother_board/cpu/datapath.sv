@@ -2,12 +2,11 @@ module datapath(
 	ctrl_bus_if.central ctrl_bus,
 	mem_bus_if.central  imem_bus,
 	mem_bus_if.central  dmem_bus,
-	output  logic		zero,
 	input   logic		mem_to_reg,
 	input	logic		mem_enab,
 	input   logic		alu_srcB,
 	input   logic		reg_dst, reg_write,
-	input   logic		jmp,
+	input   logic		branch, jmp,
 	input   logic[2:0]	alu_ctrl_sig,
 	output  logic[31:0]	inst, write_data
 );
@@ -25,7 +24,7 @@ module datapath(
 	// ステージごとの制御シグナル配線(decode ステージからくるものなので、 _D の線は用意せず ff に直接繋ぐ)
 	logic		reg_write_E, mem_to_reg_E, mem_enab_E,  alu_srcB_E, reg_dst_E;
 	logic[2:0]	alu_ctrl_sig_E;
-	logic		reg_write_M, mem_to_reg_M, mem_enab_M
+	logic		reg_write_M, mem_to_reg_M, mem_enab_M;
 	logic		reg_write_W, mem_to_reg_W;
 
 	// フォワーディング用の制御シグナル
@@ -60,12 +59,10 @@ module datapath(
 	execute_path		execute_path(.*);
 	ff		#(.N(32))	alu_out_EM(.ctrl_bus, .in(alu_out_E), .out(alu_out_M));
 	ff		#(.N(32))	write_data_EM(.ctrl_bus, .in(write_data_E), .out(write_data_M));
-	ff		#(.N(1))	zero_EM(.ctrl_bus, .in(zero_E), .out(zero_M));
 	ff		#(.N(5))	reg_dst_EM(.ctrl_bus, .in(reg_id_E), .out(reg_id_M));
 	ff		#(.N(1))	reg_write_EM(.ctrl_bus, .in(reg_write_E), .out(reg_write_M));
 	ff		#(.N(1))	mem_to_reg_EM(.ctrl_bus, .in(mem_to_reg_E), .out(mem_to_reg_M));
 	ff		#(.N(1))	mem_enab_EM(.ctrl_bus, .in(mem_enab_E), .out(mem_enab_M));
-	ff		#(.N(1))	branch_EM(.ctrl_bus, .in(branch_E), .out(branch_M));
 
 	memory_path		memory_path(.*);
 	assign	write_data	= write_data_M;

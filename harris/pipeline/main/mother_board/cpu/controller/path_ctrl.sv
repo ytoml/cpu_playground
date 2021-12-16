@@ -1,15 +1,15 @@
 `include "lib_cpu.svh"
 module path_ctrl import lib_cpu::*; (
     input   OPECODE     op,
-    output  logic       mem_to_reg, write_enab,
-    output  logic       alu_src, branch,
+    output  logic       mem_to_reg, mem_enab,
+    output  logic       alu_srcB, branch,
     output  logic       reg_dst, reg_write,
     output  logic       jmp,
     output  logic[1:0]  alu_op
 );
     logic[8:0]  ctrl_sigs;
     assign {
-        mem_to_reg, write_enab, alu_src, branch,
+        mem_to_reg, mem_enab, alu_srcB, branch,
         reg_dst, reg_write, jmp, alu_op
     } = ctrl_sigs;
 
