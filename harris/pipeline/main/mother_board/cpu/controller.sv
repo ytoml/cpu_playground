@@ -11,5 +11,5 @@ module controller import lib_cpu::*; (
     logic[1:0]  alu_op;
 
     alu_ctrl    alu_ctrl(.*);
-    path_ctrl   path_ctrl(.*));
+    path_ctrl   path_ctrl(.*);
 endmodule

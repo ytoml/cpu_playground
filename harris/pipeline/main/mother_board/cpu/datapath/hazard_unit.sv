@@ -3,7 +3,7 @@ module hazard_unit(
 	input	logic[4:0]	rs_D, rt_D,
 	input	logic[4:0]	rs_E, rt_E, rd_E,
 	input	logic		mem_to_reg_E, mem_to_reg_M,
-	input	logic[4:0]	reg_id_M, reg_id_W,
+	input	logic[4:0]	reg_id_E, reg_id_M, reg_id_W,
 	input	logic		reg_write_E, reg_write_M, reg_write_W,
 	output	logic		pc_enab, enab_FD, flush_DE,
 	output	logic		forwardA_D, forwardB_D,

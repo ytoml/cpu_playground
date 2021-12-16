@@ -1,6 +1,6 @@
 module decode_path (
 	ctrl_bus_if.central	ctrl_bus,
-	input	logic[31:0]	inst_D, result_W,
+	input	logic[31:0]	inst_D, pc_plus4_D, result_W,
 	input	logic[31:0]	alu_out_M, // フォワーディングされるデータ
 	input	logic[4:0]	reg_id_W,
 	input	logic		reg_write_W,

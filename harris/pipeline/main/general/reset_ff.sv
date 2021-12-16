@@ -1,5 +1,5 @@
 // 外部 reset 付き FF
-module enab_ff #(parameter N) (
+module reset_ff #(parameter N) (
 	ctrl_bus_if.central		ctrl_bus,
 	input	logic			reset,
 	input	logic[N-1:0]	in,

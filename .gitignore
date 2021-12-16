@@ -3,3 +3,4 @@ constraints/*
 .DS_Store
 harris/single/single
 harris/multi/multi
+harris/pipeline/pipeline

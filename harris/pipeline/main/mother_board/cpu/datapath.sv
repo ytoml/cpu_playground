@@ -11,8 +11,9 @@ module datapath(
 	output  logic[31:0]	inst, write_data
 );
 	// ステージごとのデータパス配線
-	logic[31:0] pc_F, pc_plus4_F, inst_F;
-	logic[31:0]	inst_D, pc_plus4_D, pc_br_D, imm_D, rs_out_D, write_data_D; 
+	logic[31:0] pc_plus4_F, inst_F;
+	logic[31:0]	inst_D, pc_plus4_D, pc_br_D, pc_jmp_D, imm_D, rs_out_D, rt_out_D, write_data_D; 
+	logic[4:0]	rt_D, rs_D;
 	logic		pc_src_D;
 	logic[31:0] rs_out_E, rt_out_E, alu_out_E, imm_E, write_data_E;
 	logic[4:0]  rt_E, rd_E, reg_id_E;
@@ -43,12 +44,13 @@ module datapath(
 
 	decode_path				decode_path(.*);
 	assign	inst			= inst_D;
+	assign	{ rt_D, rs_D }	= inst_D[25:16];
 	reset_ff	#(.N(32))	pcreg_DE(.ctrl_bus, .reset(flush_DE), .in(pc_plus4_D), .out(pc_plus4_E));
 	reset_ff	#(.N(32))	imm_reg_DE(.ctrl_bus, .reset(flush_DE), .in(imm_D), .out(imm_E));
 	reset_ff	#(.N(32))	rs_buf_DE(.ctrl_bus, .reset(flush_DE), .in(rs_out_D), .out(rs_out_E));
 	reset_ff	#(.N(32))	rt_buf_DE(.ctrl_bus, .reset(flush_DE), .in(rt_out_D), .out(rt_out_E));
-	reset_ff	#(.N(5))	rs_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[25:21]), .out(rs_E));
-	reset_ff	#(.N(5))	rt_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[20:16]), .out(rt_E));
+	reset_ff	#(.N(5))	rs_dst_DE(.ctrl_bus, .reset(flush_DE), .in(rs_D), .out(rs_E));
+	reset_ff	#(.N(5))	rt_dst_DE(.ctrl_bus, .reset(flush_DE), .in(rt_D), .out(rt_E));
 	reset_ff	#(.N(5))	rd_dst_DE(.ctrl_bus, .reset(flush_DE), .in(inst_D[15:11]), .out(rd_E));
 	reset_ff	#(.N(1))	reg_write_DE(.ctrl_bus, .reset(flush_DE), .in(reg_write), .out(reg_write_E));
 	reset_ff	#(.N(1))	mem_to_reg_DE(.ctrl_bus, .reset(flush_DE), .in(mem_to_reg), .out(mem_to_reg_E));

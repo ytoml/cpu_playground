@@ -12,6 +12,6 @@ module fetch_path (
 	assign	inst_F			= imem_bus.data;
 	assign	pc_plus4_F		= pc_F + 32'b100;
 	mux2	#(.N(32))	pc_br_sel(.sel(pc_src_D), .src0(pc_plus4_F), .src1(pc_br_D), .out(pc_br_next));
-	mux2	#(.N(32))	pc_jmp_sel(.self(jmp), .src0(pc_br_next), src1(pc_jmp_D). out(pc));
+	mux2	#(.N(32))	pc_jmp_sel(.sel(jmp), .src0(pc_br_next), .src1(pc_jmp_D), .out(pc));
 	enab_ff	#(.N(32))	pc_reg(.ctrl_bus, .enab(pc_enab), .in(pc), .out(pc_F));
 endmodule

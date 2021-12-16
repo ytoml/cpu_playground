@@ -1,7 +1,6 @@
 module dmem (
     ctrl_bus_if.central  ctrl_bus,
     mem_bus_if.peripheral   dmem_bus,
-    input   logic           write_enab,
     input   logic[31:0]     write_data
 );
     // ひとまず小さめに RAM を取ることにして、大きいアドレスにアクセスしないようにしておく
@@ -14,7 +13,7 @@ module dmem (
     assign dmem_bus.data = DMEM[word_index];
 
     always_ff @(posedge ctrl_bus.clk) begin
-        if (write_enab) DMEM[word_index] <= write_data;
+        if (dmem_bus.enab) DMEM[word_index] <= write_data;
     end
     
 endmodule
