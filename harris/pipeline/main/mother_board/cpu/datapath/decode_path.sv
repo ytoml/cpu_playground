@@ -6,12 +6,12 @@ module decode_path (
 	input	logic		reg_write_W,
 	input	logic		branch,
 	input	logic		forwardA_D, forwardB_D,
-	output	logic[31:0]	rs_out_D, rt_out_D, imm_D, pc_br_D,
+	output	logic[31:0]	rs_out_D, rt_out_D, imm_D, pc_br_D, pc_jmp_D,
 	output	logic		pc_src_D
 );
 	// 分岐予測失敗時のストールを軽減するためにソースオペランド(rs, rt)の等値判定をここで行っておく
 	logic		src_eq;
-	logic[31:0]	rs_comp, rt_comp;
+	logic[31:0]	br_offset, rs_comp, rt_comp;
 
 	regfile			regfile(
 		.ctrl_bus, .reg_write(reg_write_W),
@@ -25,4 +25,5 @@ module decode_path (
 	assign	pc_src_D	= branch & src_eq;
 	assign	br_offset	= { imm_D[29:0], 2'b00 };
 	assign	pc_br_D		= pc_plus4_D + br_offset;
+	assign	pc_jmp_D	= { pc_plus4_D[31:28], inst_D[25:0], 2'b00 };
 endmodule

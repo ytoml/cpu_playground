@@ -31,14 +31,15 @@ module datapath(
 	logic		forwardA_D, forwardB_D;
 	logic[1:0]	forwardA_E, forwardB_E;
 
-	// ストール用の制御シグナル
-	logic		pc_enab, enab_FD, flush_DE;
+	// ストール・フラッシュ用の制御シグナル
+	logic		pc_enab, enab_FD, flush_FD, flush_DE;
 
 	hazard_unit				hazard_unit(.*);
 
 	fetch_path				fetch_path(.*);
-	renab_ff	#(.N(32))	pcreg_FD(.ctrl_bus, .reset(pc_src_D), .enab(enab_FD), .in(pc_plus4_F), .out(pc_plus4_D));
-	renab_ff	#(.N(32))	ireg_FD(.ctrl_bus, .reset(pc_src_D), .enab(enab_FD), .in(inst_F), .out(inst_D));
+	assign	flush_FD		= pc_src_D | jmp;
+	renab_ff	#(.N(32))	pcreg_FD(.ctrl_bus, .reset(flush_FD), .enab(enab_FD), .in(pc_plus4_F), .out(pc_plus4_D));
+	renab_ff	#(.N(32))	ireg_FD(.ctrl_bus, .reset(flush_FD), .enab(enab_FD), .in(inst_F), .out(inst_D));
 
 	decode_path				decode_path(.*);
 	assign	inst			= inst_D;
