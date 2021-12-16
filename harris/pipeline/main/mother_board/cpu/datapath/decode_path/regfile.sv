@@ -6,7 +6,8 @@ module regfile(
     output  logic[31:0] rs_data, rt_data
 );
 	logic [31:0] REGS[31:0];
-	always_ff @(posedge ctrl_bus.clk or posedge ctrl_bus.reset) begin
+	// サイクルの前半で writeback して後半で regfile から読むという流れに、negedge 更新にすることで対応
+	always_ff @(negedge ctrl_bus.clk or posedge ctrl_bus.reset) begin
 		if(ctrl_bus.reset) begin
 			for(int i = 0; i < 32; i++) REGS[i] = 32'b0;
 		end else if (reg_write) begin

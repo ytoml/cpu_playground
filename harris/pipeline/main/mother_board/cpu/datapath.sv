@@ -12,12 +12,12 @@ module datapath(
 );
 	// ステージごとのデータパス配線
 	logic[31:0] pc_plus4_F, inst_F;
-	logic[31:0]	inst_D, pc_plus4_D, pc_br_D, pc_jmp_D, imm_D, rs_out_D, rt_out_D, write_data_D; 
+	logic[31:0]	inst_D, pc_plus4_D, pc_br_D, pc_jmp_D, imm_D, rs_out_D, rt_out_D; 
 	logic[4:0]	rt_D, rs_D;
 	logic		pc_src_D;
 	logic[31:0] rs_out_E, rt_out_E, alu_out_E, imm_E, write_data_E;
-	logic[4:0]  rt_E, rd_E, reg_id_E;
-	logic[31:0]	alu_out_M, read_data_M;
+	logic[4:0]  rs_E, rt_E, rd_E, reg_id_E;
+	logic[31:0]	alu_out_M, write_data_M, read_data_M;
 	logic[4:0]	reg_id_M;
 	logic[31:0]	alu_out_W, read_data_W, result_W;
 	logic[4:0]	reg_id_W;
@@ -40,11 +40,11 @@ module datapath(
 	fetch_path				fetch_path(.*);
 	assign	flush_FD		= pc_src_D | jmp;
 	renab_ff	#(.N(32))	pcreg_FD(.ctrl_bus, .reset(flush_FD), .enab(enab_FD), .in(pc_plus4_F), .out(pc_plus4_D));
-	renab_ff	#(.N(32))	ireg_FD(.ctrl_bus, .reset(flush_FD), .enab(enab_FD), .in(inst_F), .out(inst_D));
+	inst_ff					ireg_FD(.ctrl_bus, .reset(flush_FD), .enab(enab_FD), .in(inst_F), .out(inst_D));
 
 	decode_path				decode_path(.*);
 	assign	inst			= inst_D;
-	assign	{ rt_D, rs_D }	= inst_D[25:16];
+	assign	{ rs_D, rt_D }	= inst_D[25:16];
 	reset_ff	#(.N(32))	pcreg_DE(.ctrl_bus, .reset(flush_DE), .in(pc_plus4_D), .out(pc_plus4_E));
 	reset_ff	#(.N(32))	imm_reg_DE(.ctrl_bus, .reset(flush_DE), .in(imm_D), .out(imm_E));
 	reset_ff	#(.N(32))	rs_buf_DE(.ctrl_bus, .reset(flush_DE), .in(rs_out_D), .out(rs_out_E));
