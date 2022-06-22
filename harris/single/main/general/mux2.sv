@@ -4,5 +4,4 @@ module mux2 #(parameter N) (
     output  logic[N-1:0]   out
 );
     assign out = sel ? src2 : src1;
-
 endmodule

@@ -21,5 +21,4 @@ module cpu (
 
     controller  controller(.*);
     datapath    datapath(.*);
-    
 endmodule

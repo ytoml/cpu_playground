@@ -1,12 +1,12 @@
 module alu #(parameter N)(
-    input   logic[N-1:0] src1, src2,
-    input   logic[2:0]  alu_ctrl_sig,
-    output  logic[N-1:0] alu_out,
-    output  logic       zero
+    input   logic[N-1:0]    src1, src2,
+    input   logic[2:0]      alu_ctrl_sig,
+    output  logic[N-1:0]    alu_out,
+    output  logic           zero
 );
 
-	logic[31:0]	sub;
-	assign sub = src1 - src2;
+    logic[31:0] sub;
+    assign sub  = src1 - src2;
     // MIPS の ALU にはオーバーフローフラグがない
     always_comb begin
         unique case (alu_ctrl_sig)
@@ -22,5 +22,4 @@ module alu #(parameter N)(
         endcase
     end
     assign zero = alu_out == 0;
-    
 endmodule

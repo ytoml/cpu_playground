@@ -4,5 +4,4 @@ module sign_ext(
 );
     // 入力 bit の MSB を見て符号拡張
     assign full = {{16{half[15]}}, half};
-    
 endmodule 

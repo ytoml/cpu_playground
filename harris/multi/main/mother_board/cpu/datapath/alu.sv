@@ -5,8 +5,8 @@ module alu #(parameter N)(
     output  logic       zero
 );
 
-	logic[31:0]	sub;
-	assign sub = srcA - srcB;
+    logic[31:0]    sub;
+    assign sub = srcA - srcB;
     // MIPS の ALU にはオーバーフローフラグがない
     always_comb begin
         unique case (alu_ctrl_sig)

@@ -11,7 +11,7 @@ module cpu (
     FUNCT       funct;
     logic       mem_to_reg, mem_enab, pc_src, alu_srcB, reg_dst, reg_write, branch, jmp;
     logic[2:0]  alu_ctrl_sig;
-	logic[31:0]	inst;
+    logic[31:0] inst;
     
     decoder decoder(
         .prefix(inst[31:26]),

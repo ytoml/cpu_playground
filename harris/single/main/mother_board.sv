@@ -10,5 +10,4 @@ module mother_board (
 
     cpu     cpu(.*);
     memory  memory(.*);
-    
 endmodule

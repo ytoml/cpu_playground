@@ -20,19 +20,19 @@ module datapath(
     assign dmem_bus.addr = alu_out;
     assign read_data = dmem_bus.data;
 
-	// PC 制御
-	ff #(.N(32))	pcreg(.ctrl_bus, .in(pc_next), .out(pc));
-	assign pc_plus4		= pc + 32'b100;
-	assign br_offset	= { imm[29:0], 2'b00 };
-	assign pc_br		= pc_plus4 + br_offset;
-	assign pc_jmp		= { pc_plus4[31:28], inst[25:0], 2'b00 }; // word(4byte) alignment
+    // PC 制御
+    ff #(.N(32))        pcreg(.ctrl_bus, .in(pc_next), .out(pc));
+    assign pc_plus4     = pc + 32'b100;
+    assign br_offset    = { imm[29:0], 2'b00 };
+    assign pc_br        = pc_plus4 + br_offset;
+    assign pc_jmp       = { pc_plus4[31:28], inst[25:0], 2'b00 }; // word(4byte) alignment
 
-	// beq は 次の命令(pc_plus4) からの相対でアドレシング、j は(擬似)直接アドレシング
+    // beq は 次の命令(pc_plus4) からの相対でアドレシング、j は(擬似)直接アドレシング
     mux2 #(.N(32))  pc_br_select(.sel(pc_src), .src1(pc_plus4), .src2(pc_br), .out(pc_br_next));
-	mux2 #(.N(32))	pc_select(.sel(jmp), .src1(pc_br_next), .src2(pc_jmp), .out(pc_next));
+    mux2 #(.N(32))  pc_select(.sel(jmp), .src1(pc_br_next), .src2(pc_jmp), .out(pc_next));
 
     // lw 命令では inst[20:16], R 形式では inst[15:11] をディスティネーションに設定
-    mux2 #(.N(5))  sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(reg_id));
+    mux2 #(.N(5))   sel_dst(.sel(reg_dst), .src1(inst[20:16]), .src2(inst[15:11]), .out(reg_id));
     regfile         regfile(
         .ctrl_bus, .reg_write,
         .rs(inst[25:21]), .rt(inst[20:16]), .rd(reg_id),
