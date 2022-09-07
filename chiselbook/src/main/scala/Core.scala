@@ -105,7 +105,7 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
     val imm_s_sext  = Cat(Fill(20, imm_s(11)), imm_s)
     // Imm for B/J Type is always even because instrcution width is 16 or 32 bits.
     val imm_b       = Cat(inst(31), inst(7), inst(30, 25), inst(11, 8))
-    val imm_b_sext  = Cat(Fill(19, imm_b(11)), imm_b, 0.U(1.U)) 
+    val imm_b_sext  = Cat(Fill(19, imm_b(11)), imm_b, 0.U(1.U))
     val imm_j       = Cat(inst(31), inst(19, 12), inst(20), inst(30, 21))
     val imm_j_sext  = Cat(Fill(11, imm_j(19)), imm_j, 0.U)
     val imm_u       = inst(31, 12)
@@ -136,7 +136,7 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
 	    (exec_func === ALU_SRL)   -> (op1_data >> op2_data(4, 0)).asUInt(),
 	    (exec_func === ALU_SRA)   -> (op1_data.asSInt() >> op2_data(4, 0)).asUInt(), // Arithmetic(signed) right shift
 	    (exec_func === ALU_SLT)   -> (op1_data.asSInt() < op2_data.asSInt()).asUInt(),
-	    (exec_func === ALU_SLTU)  -> (op1_data < op2_data).asUInt(),
+	    (exec_func === ALU_SLTU)  -> (op1_data.asUInt() < op2_data.asUInt()).asUInt(),
 	    (exec_func === ALU_JALR)  -> ((op1_data + op2_data) & ~1.U(WORD_LEN.W)),
         (exec_func === ALU_COPY1) -> op1_data,
     ));
@@ -167,7 +167,7 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
         (csr_cmd === CSR_W) -> op1_data,
         (csr_cmd === CSR_S) -> (csr_rdata | op1_data),
         (csr_cmd === CSR_C) -> (csr_rdata & ~op1_data),
-        (csr_cmd === CSR_E) -> 11.U(WORD_LEN.W),  // Machine Mode 
+        (csr_cmd === CSR_E) -> 11.U(WORD_LEN.W),  // Machine Mode
     ))
     /* -------------------------------------------------- */
 
@@ -175,7 +175,8 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
     /* -------------------------------------------------- */
     io.dmem.addr := alu_out
     io.dmem.w_en := (inst === SW)
-    io.dmem.wdata := op2_data
+    // not op2_data: when SW, op2_data is actually imm_s_sext
+    io.dmem.wdata := rs2_data
     /* -------------------------------------------------- */
 
     // WriteBack
@@ -184,17 +185,18 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
         (wb_sel === WB_MEM) -> io.dmem.rdata,
         (wb_sel === WB_PC)  -> pc_plus4,
         (wb_sel === WB_CSR) -> csr_rdata,
-    )) 
+    ))
     when(reg_en === R_EN_S) {
         regfile(wb_addr) := wb_data
     }
     when(csr_cmd =/= CSR_X) {
         csr_regs(csr_addr) := csr_wdata
     }
-    
+
     // Debug signals
     /* -------------------------------------------------- */
 	printf(p"${"-"*50}\n")
+    printf(p"exec_func  : ${exec_func}\n")
     // val inst_name = InstructionNameLookup(inst, "Invalid")
 	printf(p"pc_reg     : 0x${Hexadecimal(pc_reg)}\n")
 	printf(p"inst       : 0x${Hexadecimal(inst)}\n")
@@ -204,6 +206,8 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
 	printf(p"wb_addr    : $wb_addr\n")
 	printf(p"rs1_data   : 0x${Hexadecimal(rs1_data)}\n")
 	printf(p"rs2_data   : 0x${Hexadecimal(rs2_data)}\n")
+	printf(p"op1_data   : 0x${Hexadecimal(op1_data)}\n")
+	printf(p"op2_data   : 0x${Hexadecimal(op2_data)}\n")
 	printf(p"wb_data    : 0x${Hexadecimal(wb_data)}\n")
 	printf(p"dmem.addr	: 0x${Hexadecimal(io.dmem.addr)}\n")
 	printf(p"dmem.w_en	: 0x${Hexadecimal(io.dmem.w_en)}\n")
@@ -221,10 +225,10 @@ class Core(val term: UInt, val terminator: TestTerminator) extends Module {
     import TestTerminator._
     terminator match {
         case Instruction => {
-            io.exit := (inst === term) /* hex test */ 
+            io.exit := (inst === term) /* hex test */
         }
         case ProgramCounter => {
-            io.exit := (pc_reg === term) /* hex test */ 
+            io.exit := (pc_reg === term) /* hex test */
         }
     }
 }
