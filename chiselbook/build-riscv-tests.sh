@@ -8,6 +8,8 @@ info() {
   echo -e "${CYAN}${1}${RESET}"
 }
 
+mkdir riscv-tests
+
 # Overwrite start address
 cat ${RVTESTS}/env/p/link.ld | sed -e 's/0x80000000/0x00000000/g' > .tmp
 cat .tmp > ${RVTESTS}/env/p/link.ld

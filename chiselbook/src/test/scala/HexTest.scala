@@ -5,7 +5,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 import chiseltest._
 import java.io.{File, FileNotFoundException}
 import org.scalatest.Exceptional
-// import common.InstructionNameLookup
+
+import common.Consts.WORD_LEN
 
 class HexTest extends AnyFlatSpec with ChiselScalatestTester {
     val configs = Iterator(
@@ -18,7 +19,7 @@ class HexTest extends AnyFlatSpec with ChiselScalatestTester {
         case (name, term_addr) => {
             "mycpu:" + name should "work through hex" in {
                 RunInfo(name)
-                test(new Top("src/hex/" + name + ".hex", term_addr, TestTerminator.Instruction)) { c =>
+                test(new Top(s"src/hex/$name.hex", term_addr.U(WORD_LEN.W), TestTerminator.Instruction)) { c =>
                     while (!c.testio.exit.peek().litToBoolean) {
                         c.clock.step(1)
                     }

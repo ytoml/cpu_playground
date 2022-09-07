@@ -3,10 +3,8 @@ package riscv
 import chisel3._
 import org.scalatest.flatspec.AnyFlatSpec
 import chiseltest._
-import java.io.{File, FileNotFoundException}
-import org.scalatest.Exceptional
 
-// import riscv.SupportedInstructions
+import common.Consts.WORD_LEN
 
 class RiscvTest extends AnyFlatSpec with ChiselScalatestTester {
     // (ISA, Supported iter(instructions))
@@ -23,8 +21,8 @@ class RiscvTest extends AnyFlatSpec with ChiselScalatestTester {
                         val name = s"rv32$isa-p-$inst"
                         val hexfile = s"src/riscv/$name.hex"
                         RunInfo(name)
-                        test(new Top(hexfile, 0x44, TestTerminator.ProgramCounter)) { c =>
-                            c.clock.setTimeout(100000)
+                        test(new Top(hexfile, 0x44.U(WORD_LEN.W), TestTerminator.ProgramCounter)) { c =>
+                            c.clock.setTimeout(1000)
                             while (!c.testio.exit.peek().litToBoolean) {
                                 c.clock.step(1)
                             }
