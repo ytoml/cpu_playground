@@ -17,7 +17,8 @@ class HexTest extends AnyFlatSpec with ChiselScalatestTester {
     configs.foreach {
         case (name, term_addr) => {
             "mycpu:" + name should "work through hex" in {
-                test(new Top("src/hex/" + name + ".hex", term_addr)) { c =>
+                RunInfo(name)
+                test(new Top("src/hex/" + name + ".hex", term_addr, TestTerminator.Instruction)) { c =>
                     while (!c.testio.exit.peek().litToBoolean) {
                         c.clock.step(1)
                     }

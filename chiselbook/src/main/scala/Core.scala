@@ -6,16 +6,24 @@ import chisel3.util.Arbiter
 
 import common.Consts._
 import common.Instructions._
-// import common.InstructionNameLookup
 
-class Core(val testname: String, var term_inst: UInt) extends Module {
+// To specify what io.exit depends on.
+trait TestTerminator
+object TestTerminator {
+    case object Instruction extends TestTerminator
+    case object ProgramCounter extends TestTerminator
+}
+
+class Core(val term: UInt, val terminator: TestTerminator) extends Module {
 	val io = IO(new Bundle {
 		val imem = Flipped(new ImemPortIo())
 		val dmem = Flipped(new DmemPortIo())
 		val exit = Output(Bool())
+        val gp   = Output(UInt(WORD_LEN.W)) // Global pointer (for test)
 	})
 	val regfile = Mem(32, UInt(WORD_LEN.W))
 	val csr_regs = Mem(4096, UInt(WORD_LEN.W))
+    io.gp := regfile(3)
 
     // Fetch
     /* -------------------------------------------------- */
@@ -186,7 +194,7 @@ class Core(val testname: String, var term_inst: UInt) extends Module {
     
     // Debug signals
     /* -------------------------------------------------- */
-	printf(p"----------------- test:${testname} -------------------\n")
+	printf(p"${"-"*50}\n")
     // val inst_name = InstructionNameLookup(inst, "Invalid")
 	printf(p"pc_reg     : 0x${Hexadecimal(pc_reg)}\n")
 	printf(p"inst       : 0x${Hexadecimal(inst)}\n")
@@ -201,5 +209,23 @@ class Core(val testname: String, var term_inst: UInt) extends Module {
 	printf(p"dmem.w_en	: 0x${Hexadecimal(io.dmem.w_en)}\n")
 	printf(p"dmem.wdata : 0x${Hexadecimal(io.dmem.wdata)}\n")
 	printf(p"dmem.rdata : 0x${Hexadecimal(io.dmem.wdata)}\n")
-	io.exit := (inst === term_inst)
+    when(csr_cmd =/= CSR_X) {
+	    printf(p"csr_addr   : $csr_addr\n")
+	    printf(p"csr_rdata  : 0x${Hexadecimal(csr_rdata)}\n")
+	    printf(p"csr_wdata  : 0x${Hexadecimal(csr_wdata)}\n")
+    }
+	printf(p"br_flag    : 0x${Hexadecimal(io.dmem.wdata)}\n")
+	printf(p"j_flag     : 0x${Hexadecimal(io.dmem.wdata)}\n")
+	printf(p"gp         : 0x${Hexadecimal(io.gp)}\n")
+
+    import TestTerminator._
+    terminator match {
+        case Instruction => {
+            io.exit := (inst === term) /* hex test */ 
+        }
+        case ProgramCounter => {
+            io.exit := (pc_reg === term) /* hex test */ 
+        }
+    }
 }
+
