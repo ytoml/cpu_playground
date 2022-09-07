@@ -1,0 +1,7 @@
+{
+    
+    "rust-analyzer.checkOnSave.allTargets": false,
+    "rust-analyzer.checkOnSave.extraArgs": [
+        "--target", "rust-test/myriscv32i-unknown-none-elf.json"
+    ]
+}

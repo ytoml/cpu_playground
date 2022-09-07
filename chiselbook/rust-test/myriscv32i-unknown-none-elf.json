@@ -1,0 +1,31 @@
+{
+    "arch": "riscv32",
+    "atomic-cas": false,
+    "cpu": "generic-rv32",
+    "data-layout": "e-m:e-p:32:32-i64:64-n32-S128",
+    "eh-frame-header": false,
+    "emit-debug-gdb-scripts": false,
+    "executables": true,
+    "exe-suffix": ".elf",
+    "is-builtin": false,
+    "linker": "rust-lld",
+    "linker-flavor": "ld.lld",
+    "llvm-target": "riscv32",
+    "max-atomic-width": 0,
+    "panic-strategy": "abort",
+    "post-link-args": {
+        "ld.lld": [
+            "--entry=__main",
+            "--image-base=0x00000000",
+            "--section-start=.text=0x00000000",
+            "--static"
+        ]
+    },
+    "os": "none",
+    "relro-level": "off",
+    "relocation-model": "static",
+    "target-endian": "little",
+    "target-c-int-width": "32",
+    "target-pointer-width": "32",
+    "vendor": "unknown"
+  }
